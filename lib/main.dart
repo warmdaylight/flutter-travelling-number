@@ -1,3 +1,5 @@
+import 'dart:math';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 
 void main() => runApp(App());
@@ -59,4 +61,47 @@ class NumberBox extends StatelessWidget {
         ),
         onTap: () {print('Value $value is tapped');},
       );
+}
+
+
+class Game {
+  List<int> blocks;
+  int dim;
+  final _random = Random();
+  Game(this.dim) {
+    blocks = List.generate(dim * dim, (i) => i);
+  }
+
+  List<int> moveablePieces() {
+    int x = blocks.indexOf(0);
+    return [
+      x % 3 == 2 ? -1 : x + 1, // right
+      x > 5 ? -1 : x + 3, // bottom
+      x % 3 == 0 ? -1 : x - 1, // left
+      x < 3 ? -1 : x - 3, // top
+    ].where((i) => !i.isNegative).toList();
+  }
+
+  bool isSolved() {
+    var solved = List.generate(blocks.length - 1, (i) => i + 1);
+    return ListEquality().equals(solved, blocks.take(blocks.length - 1).toList());
+  }
+
+  bool move(int piece) {
+    int location =blocks.indexOf(piece);
+    int space =blocks.indexOf(0);
+    if (moveablePieces().contains(location)) {
+      blocks[space] = piece;
+      blocks[location] = 0;
+      return true;
+    }
+    return false;
+  }
+
+  void generate() {
+    for (var i = 0; i < 999; i++) {
+      var s = moveablePieces();
+      move(s[_random.nextInt(s.length)]);
+    }
+  }
 }

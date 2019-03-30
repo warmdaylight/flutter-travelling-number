@@ -19,7 +19,7 @@ class App extends StatelessWidget {
 
 class Board extends StatefulWidget {
   @override
-  State<StatefulWidget> createState() => _Board(3);
+  State<StatefulWidget> createState() => _Board();
 }
 
 class _Board extends State<Board> {
@@ -31,10 +31,46 @@ class _Board extends State<Board> {
 
   void restart() {
     setState(() {
-      print('before: ${_game.blocks}');
       _game.shuffle();
-      print('after: ${_game.blocks}');
     });
+  }
+
+  Widget _buildBody() => Center(
+        child: AspectRatio(
+          aspectRatio: 1.0,
+          child: Container(
+            padding: EdgeInsets.all(10.0),
+            margin: EdgeInsets.all(10.0),
+            child: GridView.builder(
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: _game.dim),
+              itemBuilder: _buildNumPieces,
+              itemCount: _game.blocks.length,
+              scrollDirection: Axis.horizontal,
+            ),
+          ),
+        ),
+      );
+
+  Widget _buildNumPieces(BuildContext context, int index) {
+    var card = Card(
+      child: Center(
+        child: Text('${_game.blocks[index]}',
+          textAlign: TextAlign.center,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 20.0,
+          )),
+    ));
+    if (_game.blocks[index] == 0) 
+      return Text('');
+    if (_game.moveablePieces().contains(index)) {
+      return GestureDetector(child: card, onTap: () => setState(() {
+        _game.move(index);
+      }),);
+    }
+    return card;
   }
 
   @override
@@ -43,7 +79,7 @@ class _Board extends State<Board> {
           title: Text('Traveling Numbers'),
         ),
         body: Center(
-            child: Text('${_game.blocks}'),
+          child: _buildBody(),
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: restart,
@@ -73,7 +109,8 @@ class Game {
 
   bool isSolved() {
     var solved = List.generate(blocks.length - 1, (i) => i + 1);
-    return ListEquality().equals(solved, blocks.take(blocks.length - 1).toList());
+    return ListEquality()
+        .equals(solved, blocks.take(blocks.length - 1).toList());
   }
 
   bool move(int pos) {

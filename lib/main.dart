@@ -19,22 +19,23 @@ class App extends StatelessWidget {
 
 class Board extends StatefulWidget {
   @override
-  State<StatefulWidget> createState() => _Board();
+  State<StatefulWidget> createState() => _Board(3);
 }
 
-List<List<int>> generateList(int dim) =>
-    List.generate(dim, (i) => List.generate(dim, (j) => i * dim + j));
-
 class _Board extends State<Board> {
-  List<List<int>> numbers;
+  Game _game;
   _Board([int dim = 4]) {
-    numbers = generateList(dim);
+    _game = Game(dim);
+    _game.shuffle();
   }
 
-  List<NumberBox> getWidgetAt(List<int> x) =>
-      x.map((i) => NumberBox(i)).toList();
-  List<TableRow> getTableRow() =>
-      numbers.map((i) => TableRow(children: getWidgetAt(i))).toList();
+  void restart() {
+    setState(() {
+      print('before: ${_game.blocks}');
+      _game.shuffle();
+      print('after: ${_game.blocks}');
+    });
+  }
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -42,27 +43,15 @@ class _Board extends State<Board> {
           title: Text('Traveling Numbers'),
         ),
         body: Center(
-            child: Table(
-          border: TableBorder.all(),
-          children: getTableRow(),
-        )),
-      );
-}
-
-class NumberBox extends StatelessWidget {
-  final int value;
-  NumberBox(this.value);
-  @override
-  Widget build(BuildContext context) => InkWell(
-        child: Container(
-          padding: EdgeInsets.all(20.0),
-          color: Theme.of(context).secondaryHeaderColor,
-          child: Center(child: Text('$value')),
+            child: Text('${_game.blocks}'),
         ),
-        onTap: () {print('Value $value is tapped');},
+        floatingActionButton: FloatingActionButton(
+          onPressed: restart,
+          tooltip: 'restart',
+          child: Icon(Icons.refresh),
+        ),
       );
 }
-
 
 class Game {
   List<int> blocks;
@@ -87,21 +76,21 @@ class Game {
     return ListEquality().equals(solved, blocks.take(blocks.length - 1).toList());
   }
 
-  bool move(int piece) {
-    int location =blocks.indexOf(piece);
-    int space =blocks.indexOf(0);
-    if (moveablePieces().contains(location)) {
-      blocks[space] = piece;
-      blocks[location] = 0;
+  bool move(int pos) {
+    int space = blocks.indexOf(0);
+    if (moveablePieces().contains(pos)) {
+      blocks[space] = blocks[pos];
+      blocks[pos] = 0;
       return true;
     }
     return false;
   }
 
-  void generate() {
-    for (var i = 0; i < 2000; i++) {
+  void shuffle() {
+    for (var i = 0; i < 999; i++) {
       var s = moveablePieces();
       move(s[_random.nextInt(s.length)]);
     }
+    if (isSolved()) shuffle();
   }
 }

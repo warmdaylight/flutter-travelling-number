@@ -110,7 +110,7 @@ void main() {
     test('move false', () {
       var game = Game(3);
       final start = [1, 2, 3, 4, 0, 5, 6, 7, 8];
-      for (var i in [1, 3, 6, 8]) {
+      for (var i in [0,2,6,8]) {
         game.blocks = List.of(start);
         expect(game.move(i), false);
         expect(game.blocks, start);
@@ -118,26 +118,52 @@ void main() {
     });
     test('move ok', () {
       var game = Game(3);
-      final start = [1,2,3,4,0,5,6,7,8];
-      for (var i in [2,4,5,7]) {
+      final start = [1, 2, 3, 4, 0, 5, 6, 7, 8];
+      for (var i in [1,3,5,7]) {
         game.blocks = List.of(start);
-        var pos =start.indexOf(i);  
         expect(game.move(i), true);
         print('move $i: ${game.blocks}');
-        expect(game.blocks[pos], 0);
-        expect(game.blocks[4], i);
+        expect(game.blocks[i], 0);
+        expect(game.blocks[4], start[i]);
       }
     });
   });
-  test('shuffle 3x3', () {
-    var game = Game(3);
-    game.generate();
-    print(game.blocks);
+
+  group('shuffle', () {
+    test('shuffle 3x3', () {
+      var game = Game(3);
+      game.shuffle();
+      print(game.blocks);
+    });
+
+    test('shuffle 4x4', () {
+      var game = Game(4);
+      game.shuffle();
+      print(game.blocks);
+    });
   });
 
-  test('shuffle 4x4', () {
-    var game = Game(4);
-    game.generate();
-    print(game.blocks);
+  group('game solved', () {
+    test('is solved 3x3', () {
+      var game = Game(3);
+      game.blocks = [1,2,3,4,5,6,7,8,0];
+      expect(game.isSolved(), true);
+    });
+
+    test('is solved 4x4', () {
+      var game = Game(4);
+      game.blocks = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,0];
+      expect(game.isSolved(), true);
+    });
+
+    test('not solved 3x3', () {
+      var game = Game(3);
+      expect(game.isSolved(), false);
+    });
+
+    test('not solved 4x4', () {
+      var game = Game(4);
+      expect(game.isSolved(), false);
+    });
   });
 }

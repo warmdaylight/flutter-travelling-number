@@ -75,10 +75,10 @@ class Game {
   List<int> moveablePieces() {
     int x = blocks.indexOf(0);
     return [
-      x % 3 == 2 ? -1 : x + 1, // right
-      x > 5 ? -1 : x + 3, // bottom
-      x % 3 == 0 ? -1 : x - 1, // left
-      x < 3 ? -1 : x - 3, // top
+      x % dim == dim - 1 ? -1 : x + 1, // right
+      x >= dim * (dim - 1) ? -1 : x + dim, // bottom
+      x % dim == 0 ? -1 : x - 1, // left
+      x < dim ? -1 : x - dim, // top
     ].where((i) => !i.isNegative).toList();
   }
 
@@ -99,7 +99,7 @@ class Game {
   }
 
   void generate() {
-    for (var i = 0; i < 999; i++) {
+    for (var i = 0; i < 2000; i++) {
       var s = moveablePieces();
       move(s[_random.nextInt(s.length)]);
     }

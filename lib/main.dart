@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 void main() => runApp(App());
 
 class App extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -26,7 +25,7 @@ class _Board extends State<Board> {
   Game _game;
   _Board([int dim = 4]) {
     _game = Game(dim);
-    _game.shuffle();
+    // _game.shuffle();
   }
 
   void restart() {
@@ -42,11 +41,12 @@ class _Board extends State<Board> {
             padding: EdgeInsets.all(10.0),
             margin: EdgeInsets.all(10.0),
             child: GridView.builder(
+              physics: NeverScrollableScrollPhysics(),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: _game.dim),
               itemBuilder: _buildNumPieces,
               itemCount: _game.blocks.length,
-              scrollDirection: Axis.horizontal,
+              scrollDirection: Axis.vertical,
             ),
           ),
         ),

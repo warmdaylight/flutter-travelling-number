@@ -9,9 +9,7 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
         title: 'Flutter Demo',
-        theme: ThemeData(
-          primarySwatch: Colors.teal,
-        ),
+        theme: ThemeData.dark(),
         home: Board());
   }
 }
@@ -25,7 +23,7 @@ class _Board extends State<Board> {
   Game _game;
   _Board([int dim = 4]) {
     _game = Game(dim);
-    // _game.shuffle();
+    _game.shuffle();
   }
 
   void restart() {
@@ -67,7 +65,7 @@ class _Board extends State<Board> {
       return Text('');
     if (_game.moveablePieces().contains(index)) {
       return GestureDetector(child: card, onTap: () => setState(() {
-        _game.move(index);
+        if (!_game.isSolved()) _game.move(index);
       }),);
     }
     return card;
@@ -81,10 +79,11 @@ class _Board extends State<Board> {
         body: Center(
           child: _buildBody(),
         ),
-        floatingActionButton: FloatingActionButton(
+        floatingActionButton: FloatingActionButton.extended(
           onPressed: restart,
           tooltip: 'restart',
-          child: Icon(Icons.refresh),
+          icon: Icon(Icons.refresh),
+          label: Text('Restart'),
         ),
       );
 }

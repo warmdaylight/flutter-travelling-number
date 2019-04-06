@@ -9,7 +9,9 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
         title: 'Flutter Demo',
-        theme: ThemeData.dark(),
+        theme: ThemeData(
+          primarySwatch: Colors.teal,
+        ),
         home: Board());
   }
 }
@@ -71,13 +73,29 @@ class _Board extends State<Board> {
     return card;
   }
 
+  Widget _successCard(context) {
+    if (_game.isSolved()) {
+
+      return Card(
+        child: ListTile(leading: Icon(Icons.golf_course), title: Text('Congrats! Game is solved.'),)
+      );
+    } else {
+      return Text('');
+    }
+  }
+
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
           title: Text('Traveling Numbers'),
         ),
-        body: Center(
-          child: _buildBody(),
+        body: Stack(
+          children: <Widget>[
+            _successCard(context),
+            Center(
+              child: _buildBody(),
+            ),
+          ],
         ),
         floatingActionButton: FloatingActionButton.extended(
           onPressed: restart,

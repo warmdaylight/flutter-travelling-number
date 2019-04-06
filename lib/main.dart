@@ -106,6 +106,13 @@ class _Board extends State<Board> {
       );
 }
 
+enum Position {
+  above,
+  below,
+  left,
+  right
+}
+
 class Game {
   List<int> blocks;
   int dim;
@@ -114,15 +121,17 @@ class Game {
     blocks = List.generate(dim * dim, (i) => i);
   }
 
-  List<int> moveablePieces() {
+  Map<Position, int> moveableMap() {
     int x = blocks.indexOf(0);
-    return [
-      x % dim == dim - 1 ? -1 : x + 1, // right
-      x >= dim * (dim - 1) ? -1 : x + dim, // bottom
-      x % dim == 0 ? -1 : x - 1, // left
-      x < dim ? -1 : x - dim, // top
-    ].where((i) => !i.isNegative).toList();
+    return {
+      Position.right: x % dim == dim - 1 ? -1 : x + 1, // right
+      Position.below: x >= dim * (dim - 1) ? -1 : x + dim, // bottom
+      Position.left: x % dim == 0 ? -1 : x - 1, // left
+      Position.above: x < dim ? -1 : x - dim, // top
+    };
   }
+
+  Iterable<int> moveablePieces() => moveableMap().values.toList().where((i) => i >= 0);
 
   bool isSolved() {
     var solved = List.generate(blocks.length - 1, (i) => i + 1);
@@ -142,7 +151,7 @@ class Game {
 
   void shuffle() {
     for (var i = 0; i < 999; i++) {
-      var s = moveablePieces();
+      var s = moveablePieces().toList();
       move(s[_random.nextInt(s.length)]);
     }
     if (isSolved()) shuffle();

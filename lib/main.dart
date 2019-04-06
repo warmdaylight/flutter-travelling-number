@@ -67,7 +67,7 @@ class _Board extends State<Board> {
       return Text('');
     if (_game.moveablePieces().contains(index)) {
       return GestureDetector(child: card, onTap: () => setState(() {
-        if (!_game.isSolved()) _game.move(index);
+      if (!_game.isSolved()) _game.move(index);
       }),);
     }
     return card;
@@ -111,7 +111,7 @@ class Game {
   int dim;
   final _random = Random();
   Game(this.dim) {
-    blocks = List.generate(dim * dim, (i) => i);
+    blocks = List.generate(dim * dim, (i) => (i + 1) % (dim * dim));
   }
 
   List<int> moveablePieces() {

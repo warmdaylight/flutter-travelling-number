@@ -65,10 +65,16 @@ class _Board extends State<Board> {
     ));
     if (_game.blocks[index] == 0) 
       return Text('');
+    var moveFunc = ([dragdetail]) => setState(() {
+      if (!_game.isSolved()) _game.move(index);
+    });
     if (_game.moveablePieces().contains(index)) {
-      return GestureDetector(child: card, onTap: () => setState(() {
-        if (!_game.isSolved()) _game.move(index);
-      }),);
+      return GestureDetector(
+        child: card, 
+        onTap: moveFunc,
+        onHorizontalDragDown: moveFunc,
+        onVerticalDragDown: moveFunc,
+      );
     }
     return card;
   }
@@ -111,7 +117,7 @@ class Game {
   int dim;
   final _random = Random();
   Game(this.dim) {
-    blocks = List.generate(dim * dim, (i) => i);
+    blocks = List.generate(dim * dim, (i) => (i + 1) % (dim * dim));
   }
 
   List<int> moveablePieces() {

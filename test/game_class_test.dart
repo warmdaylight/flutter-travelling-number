@@ -4,12 +4,12 @@ import 'package:travelling_numbers/main.dart';
 void main() {
   test('Generate 3x3', () {
     var game = Game(3);
-    expect(game.blocks, [0, 1, 2, 3, 4, 5, 6, 7, 8]);
+    expect(game.blocks, [1, 2, 3, 4, 5, 6, 7, 8, 0]);
   });
 
   test('Generate 4x4', () {
     var game = Game(4);
-    expect(game.blocks, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]);
+    expect(game.blocks, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0]);
   });
 
   group('moveable sample check', () {
@@ -158,11 +158,13 @@ void main() {
 
     test('not solved 3x3', () {
       var game = Game(3);
+      game.shuffle();
       expect(game.isSolved(), false);
     });
 
     test('not solved 4x4', () {
       var game = Game(4);
+      game.shuffle();
       expect(game.isSolved(), false);
     });
   });

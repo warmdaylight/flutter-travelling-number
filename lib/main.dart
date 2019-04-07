@@ -65,10 +65,16 @@ class _Board extends State<Board> {
     ));
     if (_game.blocks[index] == 0) 
       return Text('');
-    if (_game.moveablePieces().contains(index)) {
-      return GestureDetector(child: card, onTap: () => setState(() {
+    var moveFunc = ([dragdetail]) => setState(() {
       if (!_game.isSolved()) _game.move(index);
-      }),);
+    });
+    if (_game.moveablePieces().contains(index)) {
+      return GestureDetector(
+        child: card, 
+        onTap: moveFunc,
+        onHorizontalDragDown: moveFunc,
+        onVerticalDragDown: moveFunc,
+      );
     }
     return card;
   }

@@ -16,9 +16,7 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
         title: 'Sliding Numbers Game',
-        theme: ThemeData(
-          primarySwatch: Colors.teal,
-        ),
+        theme: ThemeData.dark(),
         home: Board());
   }
 }
@@ -32,8 +30,7 @@ class _Board extends State<Board> {
   Game _game;
   _Board([int dim = 4]) {
     _game = Game(dim);
-    _game.blocks = [1,2,3,4,5,6,7,8,9,10,11,12,13,0,14,15];
-    // _game.shuffle();
+    _game.shuffle();
   }
 
   void restart() {
@@ -60,6 +57,18 @@ class _Board extends State<Board> {
         ),
       );
 
+  void _restartPrompt(BuildContext context,String title, String message)  {
+    showDialog(context: context, builder: (c) => AlertDialog(
+      title: Text(title),
+      content: Text(message),
+      actions: <Widget>[
+        FlatButton(onPressed: () {Navigator.of(c).pop(); restart();}, child: Text('Restart'),),
+        FlatButton(onPressed: () {Navigator.of(c).pop();}, child: Text('Cancel'),)
+      ],
+    )
+    );
+  }
+
   Widget _buildNumPieces(BuildContext context, int index) {
     var card = Card(
       child: Center(
@@ -77,16 +86,7 @@ class _Board extends State<Board> {
       if (!_game.isSolved()) {
         _game.move(index);
         if (_game.isSolved()) {
-          showDialog(context: context, builder: (BuildContext c) => AlertDialog(
-            title: Text('Congratuations!'),
-            content: Text('You have solved the game'),
-            actions: <Widget>[
-              FlatButton(onPressed: () {Navigator.of(c).pop(); setState(() {
-                _game.shuffle();
-              });}, child: Text('restart'),)
-            ],
-          )
-          );
+          _restartPrompt(context, 'Congratuations!', 'Puzzle is solved.');
         }
       }
     });
@@ -113,25 +113,24 @@ class _Board extends State<Board> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(
-          title: Text('Sliding Numbers Game'),
-          
+    appBar: AppBar(
+      title: Text('Sliding Numbers Game'),
+    ),
+    body: Stack(
+      children: <Widget>[
+        _successCard(context),
+        Center(
+          child: _buildBody(),
         ),
-        body: Stack(
-          children: <Widget>[
-            _successCard(context),
-            Center(
-              child: _buildBody(),
-            ),
-          ],
-        ),
-        floatingActionButton: FloatingActionButton.extended(
-          onPressed: restart,
-          tooltip: 'restart',
-          icon: Icon(Icons.refresh),
-          label: Text('Restart'),
-        ),
-      );
+      ],
+    ),
+    floatingActionButton: FloatingActionButton.extended(
+      onPressed: () {_restartPrompt(context, 'Restart', 'Would you like to restart?');},
+      tooltip: 'restart',
+      icon: Icon(Icons.refresh),
+      label: Text('Restart'),
+    ),
+  );
 }
 
 class Game {

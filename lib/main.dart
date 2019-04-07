@@ -15,7 +15,7 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: 'Flutter Demo',
+        title: 'Sliding Numbers Game',
         theme: ThemeData(
           primarySwatch: Colors.teal,
         ),
@@ -32,7 +32,8 @@ class _Board extends State<Board> {
   Game _game;
   _Board([int dim = 4]) {
     _game = Game(dim);
-    _game.shuffle();
+    _game.blocks = [1,2,3,4,5,6,7,8,9,10,11,12,13,0,14,15];
+    // _game.shuffle();
   }
 
   void restart() {
@@ -73,7 +74,21 @@ class _Board extends State<Board> {
     if (_game.blocks[index] == 0) 
       return Text('');
     var moveFunc = ([dragdetail]) => setState(() {
-      if (!_game.isSolved()) _game.move(index);
+      if (!_game.isSolved()) {
+        _game.move(index);
+        if (_game.isSolved()) {
+          showDialog(context: context, builder: (BuildContext c) => AlertDialog(
+            title: Text('Congratuations!'),
+            content: Text('You have solved the game'),
+            actions: <Widget>[
+              FlatButton(onPressed: () {Navigator.of(c).pop(); setState(() {
+                _game.shuffle();
+              });}, child: Text('restart'),)
+            ],
+          )
+          );
+        }
+      }
     });
     if (_game.moveablePieces().contains(index)) {
       return GestureDetector(
@@ -88,7 +103,6 @@ class _Board extends State<Board> {
 
   Widget _successCard(context) {
     if (_game.isSolved()) {
-
       return Card(
         child: ListTile(leading: Icon(Icons.golf_course), title: Text('Congrats! Game is solved.'),)
       );
@@ -100,7 +114,8 @@ class _Board extends State<Board> {
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
-          title: Text('Traveling Numbers'),
+          title: Text('Sliding Numbers Game'),
+          
         ),
         body: Stack(
           children: <Widget>[

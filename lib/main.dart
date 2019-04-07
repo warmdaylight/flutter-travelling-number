@@ -15,7 +15,7 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: 'Sliding Numbers Game',
+        title: 'Travelling Numbers Game',
         theme: ThemeData.dark(),
         home: Board());
   }
@@ -114,7 +114,7 @@ class _Board extends State<Board> {
   @override
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(
-      title: Text('Sliding Numbers Game'),
+      title: Text('Travelling Numbers Game'),
     ),
     body: Stack(
       children: <Widget>[
